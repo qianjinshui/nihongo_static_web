@@ -1,17 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
-</head>
+    <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" content="text/html; charset=utf-8"/>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+    </script>
+    </head>
 
-<body>
-  <main>
-    <h1>Vanilla JavaScript App</h1>
-  </main>
-</body>
+<div>
+    
+    <ul id="myList"></ul>
+</div>
 
-</html>
+<div style="position: fixed;left: 0%;bottom: 0%;background-color:aqua">
+
+    <select id="book">
+        <option value="1">N5</option>
+        <option value="2">N4</option>
+     </select>
+     <select id="lessonselect">
+
+     </select>
+    <h4 id="name" style="text-align: center;">刚好遇见你</h4>
+    <audio id="audio" src="test/1/1.mp3" controls autoplay="true" ></audio><br />
+
+<br>
+
+    播放次数：<select id="playtimes">
+        <option value="1">1</option>
+        <option value="2" selected="selected">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+     </select>
+    <button id="btn-play">播放</button>
+    <button id="btn-stop">暂停</button>
+    <button id="btn-pre">上一首</button>
+    <button id="btn-next">下一首</button>
+</div>
+
+
+<script>
+
+$(document).ready(function() {
+    $.ajax({
+        type: "GET",
+        url: "word.txt",
+        dataType: "text",
+        success: function(data) {processData(data);}
+    });
+
+    var data = [];
+    var wordNo = 0;     
+
+    function processData(allText) {
+        var allTextLines = allText.split(/\r\n|\n/);
+        for (var i=0; i<allTextLines.length; i++) {
+            var word = allTextLines[i].split(/\t/);
+            data.push([]);
+            for (var j=0; j<word.length; j++) {
+                if (word[j] != "") {
+                    data[i].push(word[j]);
+                }
+            }
+        }
+    
+        filllesson(1);
+        fillword(1,1,data);
+        btn1.style.display = "none";
+        btn2.style.display = "none";
+        btn3.style.display = "none";
+        btn4.style.display = "none";
+
+    }
+    
+
+    function fillword(book,lesson,data) {
+        let list = document.getElementById("myList");
+        var child = list.lastElementChild;
+        while (child) {
+            list.removeChild(child);
+            child = list.lastElementChild;
+        }
+        var idNo = 0;
+        data[lesson-1].forEach((item)=>{
+            let li = document.createElement("li");
+            li.innerText = item;
+            li.id = "item"+idNo;
+            li.addEventListener("click", function(){
+
+                    wordNo = new Number(this.id.replace("item",""));
+                    playNo (this.id.replace("item",""));
+                
+                }
+            )
+            list.appendChild(li);
+            idNo+=1;
+        })
+    }
+
+    function filllesson(book) {
+        var lesson = [];
+        for (var j=1; j<25; j++) {
+            lesson.push(j+(book-1)*24);
+        }
+        lesson.forEach((a)=>{
+            let option = document.createElement("option");
+            option.innerText = a;
+            option.id = "lesson"+a;
+            lessonset.options.add(option);
+        })
+    }
+
+    //   <!--播放-->
+    var btn1 = document.getElementById("btn-play");
+    btn1.onclick = function play () {
+
+        if (audio.paused) {
+            audio.play();
+        }
+    }
+
+    // <!--暂停-->
+    var btn2 = document.getElementById("btn-stop");
+    
+    btn2.onclick = function () {
+        if (audio.played) {
+            audio.pause();
+        }
+    }
+
+
+    // <!--上一首-->
+    var btn3 = document.getElementById("btn-pre");
+    btn3.onclick = function () {
+        wordNo -= 1;
+        playNo(wordNo);
+    }
+
+    // <!--下一首-->
+    var btn4 = document.getElementById("btn-next");
+    btn4.onclick = function () {
+        wordNo += 1;
+        if (wordNo == data[document.getElementById("lessonselect").value-1].length){
+            wordNo = 0;
+        }
+        playNo(wordNo);
+    }
+
+    function playNo(no) {
+        audio.src = "test/" + document.getElementById("lessonselect").value+"/" + data[document.getElementById("lessonselect").value-1][no] + ".mp3";
+        document.getElementById("name").innerHTML = data[document.getElementById("lessonselect").value-1][no];
+        audio.play();
+    }
+
+    var times = 0;
+
+
+
+
+    // <!--自动播放--> 
+    audio.addEventListener('ended', function () {
+        times+=1;
+        if(times == document.getElementById("playtimes").value) {
+            times = 0;
+        } else {
+            wordNo -= 1;
+        }
+        btn4.onclick();
+    }, false);
+
+    var bookset = document.getElementById("book");
+    bookset.onchange = function () {
+    }
+
+    var lessonset = document.getElementById("lessonselect");
+
+
+
+    lessonset.onchange = function () {
+        fillword(1,lessonset.value,data);
+    }
+
+
+  })
+// 这样就可以控制audio播放器的播放，暂停，上一首和下一首功能了。
+</script>
