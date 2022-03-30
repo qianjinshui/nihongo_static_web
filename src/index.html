@@ -5,84 +5,87 @@
     </script>
     </head>
 
-<div>
+<div style="top: 0%;height: 80%;overflow-y: scroll;">
     
     <ul id="myList"></ul>
 </div>
 
-<div style="position: fixed;left: 0%;bottom: 0%;background-color:aqua">
+<div style="position: fixed;left: 0%;bottom: 0%;height: 20%;width: 100%;background-color:aqua">
 
+    等级：
     <select id="book">
         <option value="1">N5</option>
         <option value="2">N4</option>
-     </select>
-     <select id="lessonselect">
-
-     </select>
-    <h4 id="name" style="text-align: center;">刚好遇见你</h4>
-    <audio id="audio" src="test/1/1.mp3" controls autoplay="true" ></audio><br />
-
-<br>
-
-    播放次数：<select id="playtimes">
+    </select>
+    第几课：
+    <select id="lessonselect">
+    </select>
+    播放次数：
+    <select id="playtimes">
         <option value="1">1</option>
         <option value="2" selected="selected">2</option>
         <option value="3">3</option>
         <option value="4">4</option>
         <option value="5">5</option>
         <option value="6">6</option>
-     </select>
-    <button id="btn-play">播放</button>
-    <button id="btn-stop">暂停</button>
-    <button id="btn-pre">上一首</button>
-    <button id="btn-next">下一首</button>
+    </select>
+    <h4 id="name">背单词</h4>
+    <audio id="audio" src="test/1/1.mp3" controls autoplay="true" ></audio><br />
+<br>
+    <button id="btn-play" style="display: none;">播放</button>
+    <button id="btn-stop" style="display: none;">暂停</button>
+    <button id="btn-pre" style="display: none;">上一首</button>
+    <button id="btn-next" style="display: none;">下一首</button>
 </div>
 
 
 <script>
 
-$(document).ready(function() {
-    $.ajax({
-        type: "GET",
-        url: "word.txt",
-        dataType: "text",
-        success: function(data) {processData(data);}
-    });
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "word.txt",
+            dataType: "text",
+            success: function(data) {
+                getData(data);
+                filllesson(1);
+                fillword();
+            }
+        });
+    })
 
-    var data = [];
+    var wordlist = [];
     var wordNo = 0;     
+    var bookset = document.getElementById("book");
+    var lessonset = document.getElementById("lessonselect");
+    var list = document.getElementById("myList");
 
-    function processData(allText) {
+
+    function getData(allText) {
         var allTextLines = allText.split(/\r\n|\n/);
         for (var i=0; i<allTextLines.length; i++) {
             var word = allTextLines[i].split(/\t/);
-            data.push([]);
+            wordlist.push([]);
             for (var j=0; j<word.length; j++) {
                 if (word[j] != "") {
-                    data[i].push(word[j]);
+                    wordlist[i].push(word[j]);
                 }
             }
         }
-    
-        filllesson(1);
-        fillword(1,1,data);
-        btn1.style.display = "none";
-        btn2.style.display = "none";
-        btn3.style.display = "none";
-        btn4.style.display = "none";
-
     }
-    
 
-    function fillword(book,lesson,data) {
-        let list = document.getElementById("myList");
+    function fillword() {
+        var bookNo = bookset.value;
+        var lessonNo = lessonset.value;
+
+
         var child = list.lastElementChild;
         while (child) {
             list.removeChild(child);
             child = list.lastElementChild;
         }
         var idNo = 0;
-        data[lesson-1].forEach((item)=>{
+        wordlist[lessonNo-1].forEach((item)=>{
             let li = document.createElement("li");
             li.innerText = item;
             li.id = "item"+idNo;
@@ -98,11 +101,18 @@ $(document).ready(function() {
         })
     }
 
-    function filllesson(book) {
+    function filllesson() {
         var lesson = [];
         for (var j=1; j<25; j++) {
-            lesson.push(j+(book-1)*24);
+            lesson.push(j+(bookset.value-1)*24);
         }
+
+        var child = lessonset.lastElementChild;
+        while (child) {
+            lessonset.removeChild(child);
+            child = lessonset.lastElementChild;
+        }
+
         lesson.forEach((a)=>{
             let option = document.createElement("option");
             option.innerText = a;
@@ -141,15 +151,15 @@ $(document).ready(function() {
     var btn4 = document.getElementById("btn-next");
     btn4.onclick = function () {
         wordNo += 1;
-        if (wordNo == data[document.getElementById("lessonselect").value-1].length){
+        if (wordNo == wordlist[document.getElementById("lessonselect").value-1].length){
             wordNo = 0;
         }
         playNo(wordNo);
     }
 
     function playNo(no) {
-        audio.src = "test/" + document.getElementById("lessonselect").value+"/" + data[document.getElementById("lessonselect").value-1][no] + ".mp3";
-        document.getElementById("name").innerHTML = data[document.getElementById("lessonselect").value-1][no];
+        audio.src = "test/" + document.getElementById("lessonselect").value+"/" + wordlist[document.getElementById("lessonselect").value-1][no] + ".mp3";
+        document.getElementById("name").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
         audio.play();
     }
 
@@ -169,19 +179,20 @@ $(document).ready(function() {
         btn4.onclick();
     }, false);
 
-    var bookset = document.getElementById("book");
+
     bookset.onchange = function () {
+        filllesson();
+        fillword();
     }
 
-    var lessonset = document.getElementById("lessonselect");
 
 
 
     lessonset.onchange = function () {
-        fillword(1,lessonset.value,data);
+        fillword();
     }
 
 
-  })
+  
 // 这样就可以控制audio播放器的播放，暂停，上一首和下一首功能了。
 </script>
