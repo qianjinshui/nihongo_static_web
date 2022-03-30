@@ -173,7 +173,7 @@
 	if (window.Notification) {
 		var popNotice = function() {
 			if (Notification.permission == "granted") {
-				var notification = new Notification(document.getElementById("name").title, {
+				var notification = new Notification(document.getElementById("name").innerHTML, {
 				});
 				notification.onclick = function() {
 					notification.close();    
