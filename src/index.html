@@ -162,6 +162,9 @@
         audio.src = "test/" + document.getElementById("lessonselect").value+"/" + wordlist[document.getElementById("lessonselect").value-1][no] + ".mp3";
         document.getElementById("name").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
         document.getElementById("title").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
+        if (times == 0) {
+            popNotice();
+        }
         audio.play();
     }
 
@@ -170,9 +173,7 @@
 	if (window.Notification) {
 		var popNotice = function() {
 			if (Notification.permission == "granted") {
-				var notification = new Notification("Hi，帅哥：", {
-					body: '可以加你为好友吗？',
-					icon: 'favicon.ico'
+				var notification = new Notification(document.getElementById("name").title, {
 				});
 				notification.onclick = function() {
 					notification.close();    
@@ -181,10 +182,10 @@
 		};
 
         if (Notification.permission == "granted") {
-            popNotice();
+            console.info("notification granted");
         } else if (Notification.permission != "denied") {
             Notification.requestPermission(function (permission) {
-                popNotice();
+                console.info("notification denied");
             });
         }
 	} else {
