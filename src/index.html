@@ -1,5 +1,6 @@
 
 <head>
+    <title id="title">日语单词</title>
     <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" content="text/html; charset=utf-8"/>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
     </script>
@@ -160,13 +161,35 @@
     function playNo(no) {
         audio.src = "test/" + document.getElementById("lessonselect").value+"/" + wordlist[document.getElementById("lessonselect").value-1][no] + ".mp3";
         document.getElementById("name").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
+        document.getElementById("title").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
         audio.play();
     }
 
     var times = 0;
 
+	if (window.Notification) {
+		var popNotice = function() {
+			if (Notification.permission == "granted") {
+				var notification = new Notification("Hi，帅哥：", {
+					body: '可以加你为好友吗？',
+					icon: 'favicon.ico'
+				});
+				notification.onclick = function() {
+					notification.close();    
+				};
+			}    
+		};
 
-
+        if (Notification.permission == "granted") {
+            popNotice();
+        } else if (Notification.permission != "denied") {
+            Notification.requestPermission(function (permission) {
+                popNotice();
+            });
+        }
+	} else {
+		alert('浏览器不支持Notification');    
+	}
 
     // <!--自动播放--> 
     audio.addEventListener('ended', function () {
