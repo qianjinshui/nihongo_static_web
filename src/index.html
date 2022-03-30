@@ -163,6 +163,7 @@
         document.getElementById("name").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
         document.getElementById("title").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
         if (times == 0) {
+            notification.close();
             popNotice();
         }
         audio.play();
