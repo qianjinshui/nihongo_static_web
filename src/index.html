@@ -45,7 +45,7 @@
     $(document).ready(function() {
         $.ajax({
             type: "GET",
-            url: "word.txt",
+            url: "https://nihonngoresource.blob.core.windows.net/nihon/word.txt",
             dataType: "text",
             success: function(data) {
                 getData(data);
