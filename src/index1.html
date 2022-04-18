@@ -1,0 +1,105 @@
+
+<div>
+    <audio id="audio" src="" controls autoplay="true" ></audio><br />
+
+    <ul id="myList">
+    
+        <li>カレンダー</li>
+        <li>ポスター</li>
+        <li>ハードスケジュール</li>
+        <li>カレーライス</li>
+        <li>とっておき</li>
+        <li>本場</li>
+        <li>玄関</li>
+        <li>ロッカー</li>
+        <li>バッグ</li>
+        <li>旅行社</li>
+        <li>視察団</li>
+        <li>到着</li>
+        <li>帰り</li>
+        <li>持ち帰り</li>
+        <li>事故</li>
+        <li>花束</li>
+        <li>発表会</li>
+        <li>論文</li>
+        <li>ダイエット</li>
+        <li>オリンピック</li>
+        <li>あちこち</li>
+        <li>焼く</li>
+        <li>稼ぐ</li>
+        <li>残る</li>
+        <li>包む</li>
+        <li>頼む</li>
+        <li>貼る</li>
+        <li>飾る</li>
+        <li>しまう</li>
+        <li>合う</li>
+        <li>戻す</li>
+        <li>ためる</li>
+        <li>並べる</li>
+        <li>預ける</li>
+        <li>続ける</li>
+        <li>瘦せる</li>
+        <li>訪問する</li>
+        <li>貯金する</li>
+        <li>歓迎する</li>
+        <li>用意する</li>
+        <li>おかしい</li>
+        <li>ひどい</li>
+        <li>もったいない</li>
+        <li>優秀</li>
+        <li>最高</li>
+        <li>しっかり</li>
+        <li>非常に</li>
+        <li>こんなに</li>
+        <li>一生懸命</li>
+        <li>このまま</li>
+        <li>いただきます</li>
+        <li>遠慮なく</li>
+        
+        
+        
+    </ul>
+</div>
+
+<script type="text/javascript">
+    var li = document.getElementsByTagName("li");
+    var wordNo = 0;    
+    var times = 0;
+
+    for ( var i = 0; i< li.length; i++) {
+        (function(i) {
+            li[i].onclick = function() {
+                for ( var j = 0; j< li.length; j++) {
+                    if (this.innerHTML==li[j].innerHTML) {
+                        wordNo = j;
+                        playNo(wordNo);
+                    }
+               }
+            }
+        })(i)
+    }
+
+
+    function playNo(wordNo) {
+        audio.src = "test/32/" + li[wordNo].innerHTML + ".mp3";
+        audio.play();
+    }
+
+
+
+    audio.addEventListener('ended', function () {
+        times+=1;
+        if(times == 3) {
+            times = 0;
+        } else {
+            wordNo -= 1;
+        }
+        wordNo += 1;
+        if (wordNo == li.length){
+            wordNo = 0;
+        }
+        playNo(wordNo);
+    }, false);
+</script>
+
