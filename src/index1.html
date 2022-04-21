@@ -1,228 +1,105 @@
 
-<head>
-    <title id="title">日语单词</title>
-    <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" content="text/html; charset=utf-8"/>
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
-    </script>
-    </head>
+<div>
+    <audio id="audio" src="" controls autoplay="true" ></audio><br />
 
-<div style="top: 0%;height: 80%;overflow-y: scroll;">
+    <ul id="myList">
     
-    <ul id="myList"></ul>
+        <li>カレンダー<audio id="audio" src="" controls autoplay="true" hidden /></li>
+        <li>ポスター</li>
+        <li>ハードスケジュール</li>
+        <li>カレーライス</li>
+        <li>とっておき</li>
+        <li>本場</li>
+        <li>玄関</li>
+        <li>ロッカー</li>
+        <li>バッグ</li>
+        <li>旅行社</li>
+        <li>視察団</li>
+        <li>到着</li>
+        <li>帰り</li>
+        <li>持ち帰り</li>
+        <li>事故</li>
+        <li>花束</li>
+        <li>発表会</li>
+        <li>論文</li>
+        <li>ダイエット</li>
+        <li>オリンピック</li>
+        <li>あちこち</li>
+        <li>焼く</li>
+        <li>稼ぐ</li>
+        <li>残る</li>
+        <li>包む</li>
+        <li>頼む</li>
+        <li>貼る</li>
+        <li>飾る</li>
+        <li>しまう</li>
+        <li>合う</li>
+        <li>戻す</li>
+        <li>ためる</li>
+        <li>並べる</li>
+        <li>預ける</li>
+        <li>続ける</li>
+        <li>瘦せる</li>
+        <li>訪問する</li>
+        <li>貯金する</li>
+        <li>歓迎する</li>
+        <li>用意する</li>
+        <li>おかしい</li>
+        <li>ひどい</li>
+        <li>もったいない</li>
+        <li>優秀</li>
+        <li>最高</li>
+        <li>しっかり</li>
+        <li>非常に</li>
+        <li>こんなに</li>
+        <li>一生懸命</li>
+        <li>このまま</li>
+        <li>いただきます</li>
+        <li>遠慮なく</li>
+        
+        
+        
+    </ul>
 </div>
 
-<div style="position: fixed;left: 0%;bottom: 0%;height: 20%;width: 100%;background-color:aqua">
+<script type="text/javascript">
+    var li = document.getElementsByTagName("li");
+    var wordNo = 0;    
+    var times = 0;
 
-    等级：
-    <select id="book">
-        <option value="1">N5</option>
-        <option value="2">N4</option>
-    </select>
-    第几课：
-    <select id="lessonselect">
-    </select>
-    播放次数：
-    <select id="playtimes">
-        <option value="1">1</option>
-        <option value="2" selected="selected">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-    </select>
-    <h4 id="name">背单词</h4>
-    <audio id="audio" src="test/1/1.mp3" controls autoplay="true" ></audio><br />
-<br>
-    <button id="btn-play" style="display: none;">播放</button>
-    <button id="btn-stop" style="display: none;">暂停</button>
-    <button id="btn-pre" style="display: none;">上一首</button>
-    <button id="btn-next" style="display: none;">下一首</button>
-</div>
-
-
-<script>
-
-    $(document).ready(function() {
-        $.ajax({
-            type: "GET",
-            url: "https://nihonngoresource.blob.core.windows.net/nihon/word.txt",
-            dataType: "text",
-            success: function(data) {
-                getData(data);
-                filllesson(1);
-                fillword();
+    for ( var i = 0; i< li.length; i++) {
+        (function(i) {
+            li[i].onclick = function() {
+                for ( var j = 0; j< li.length; j++) {
+                    if (this.innerHTML==li[j].innerHTML) {
+                        wordNo = j;
+                        playNo(wordNo);
+                    }
+               }
             }
-        });
-    })
-
-    var wordlist = [];
-    var wordNo = 0;     
-    var bookset = document.getElementById("book");
-    var lessonset = document.getElementById("lessonselect");
-    var list = document.getElementById("myList");
-
-
-    function getData(allText) {
-        var allTextLines = allText.split(/\r\n|\n/);
-        for (var i=0; i<allTextLines.length; i++) {
-            var word = allTextLines[i].split(/\t/);
-            wordlist.push([]);
-            for (var j=0; j<word.length; j++) {
-                if (word[j] != "") {
-                    wordlist[i].push(word[j]);
-                }
-            }
-        }
-    }
-
-    function fillword() {
-        var bookNo = bookset.value;
-        var lessonNo = lessonset.value;
-
-
-        var child = list.lastElementChild;
-        while (child) {
-            list.removeChild(child);
-            child = list.lastElementChild;
-        }
-        var idNo = 0;
-        wordlist[lessonNo-1].forEach((item)=>{
-            let li = document.createElement("li");
-            li.innerText = item;
-            li.id = "item"+idNo;
-            li.addEventListener("click", function(){
-
-                    wordNo = new Number(this.id.replace("item",""));
-                    playNo (this.id.replace("item",""));
-                
-                }
-            )
-            list.appendChild(li);
-            idNo+=1;
-        })
-    }
-
-    function filllesson() {
-        var lesson = [];
-        for (var j=1; j<25; j++) {
-            lesson.push(j+(bookset.value-1)*24);
-        }
-
-        var child = lessonset.lastElementChild;
-        while (child) {
-            lessonset.removeChild(child);
-            child = lessonset.lastElementChild;
-        }
-
-        lesson.forEach((a)=>{
-            let option = document.createElement("option");
-            option.innerText = a;
-            option.id = "lesson"+a;
-            lessonset.options.add(option);
-        })
-    }
-
-    //   <!--播放-->
-    var btn1 = document.getElementById("btn-play");
-    btn1.onclick = function play () {
-
-        if (audio.paused) {
-            audio.play();
-        }
-    }
-
-    // <!--暂停-->
-    var btn2 = document.getElementById("btn-stop");
-    
-    btn2.onclick = function () {
-        if (audio.played) {
-            audio.pause();
-        }
+        })(i)
     }
 
 
-    // <!--上一首-->
-    var btn3 = document.getElementById("btn-pre");
-    btn3.onclick = function () {
-        wordNo -= 1;
-        playNo(wordNo);
-    }
-
-    // <!--下一首-->
-    var btn4 = document.getElementById("btn-next");
-    btn4.onclick = function () {
-        wordNo += 1;
-        if (wordNo == wordlist[document.getElementById("lessonselect").value-1].length){
-            wordNo = 0;
-        }
-        playNo(wordNo);
-    }
-
-    function playNo(no) {
-        audio.src = "test/" + document.getElementById("lessonselect").value+"/" + wordlist[document.getElementById("lessonselect").value-1][no] + ".mp3";
-        document.getElementById("name").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
-        document.getElementById("title").innerHTML = wordlist[document.getElementById("lessonselect").value-1][no];
-        if (times == 0) {
-            popNotice();
-        }
+    function playNo(wordNo) {
+        audio.src = "test/32/" + li[wordNo].innerHTML + ".mp3";
         audio.play();
     }
 
-    var times = 0;
 
-	if (window.Notification) {
-		var popNotice = function() {
-			if (Notification.permission == "granted") {
-				var notification = new Notification(document.getElementById("name").innerHTML, {
-				});
-				notification.onclick = function() {
-					notification.close();    
-				};
-                notification.onshow = function() {
-					setTimeout(function(){
-                        notification.close;
-                    },1000)  
-				};
 
-			}    
-		};
-
-        if (Notification.permission == "granted") {
-            console.info("notification granted");
-        } else if (Notification.permission != "denied") {
-            Notification.requestPermission(function (permission) {
-                console.info("notification denied");
-            });
-        }
-	} else {
-		alert('浏览器不支持Notification');    
-	}
-
-    // <!--自动播放--> 
     audio.addEventListener('ended', function () {
         times+=1;
-        if(times == document.getElementById("playtimes").value) {
+        if(times == 3) {
             times = 0;
         } else {
             wordNo -= 1;
         }
-        btn4.onclick();
+        wordNo += 1;
+        if (wordNo == li.length){
+            wordNo = 0;
+        }
+        playNo(wordNo);
     }, false);
-
-
-    bookset.onchange = function () {
-        filllesson();
-        fillword();
-    }
-
-
-
-
-    lessonset.onchange = function () {
-        fillword();
-    }
-
-
-  
-// 这样就可以控制audio播放器的播放，暂停，上一首和下一首功能了。
 </script>
+
